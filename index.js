@@ -4,6 +4,7 @@ const geojsonRbush = require('geojson-rbush').default;
 const bBox = require('@turf/bbox').default;
 const lineSplit = require('@turf/line-split').default;
 const booleanEqual = require('@turf/boolean-equal').default;
+const lineLength = require('@turf/length').default;
 
 const splitLines = (geo, debugBoolean) => {
 
@@ -50,17 +51,26 @@ const splitLines = (geo, debugBoolean) => {
             if (split.features.length > 1) {
               log(`can be split into ${split.features.length} features`);
 
-              split.features.forEach((segment, index) => {
-                const copy_properties = Object.assign({}, features[i].properties);
-                const reconstructed = Object.assign(segment, {properties: copy_properties});
-                last_id++;
-                reconstructed.properties.__prId__ = last_id;
-                features.push(reconstructed);
-                log(`Adding segment ${index} back to the loop as #${last_id}`);
+              const falsePositive = split.features.some(f => {
+                // sometimes turf line-split can unnecessarily cut a line
+                // leaving a main segment and a microscopic segment
+                const len = lineLength(f, {units: 'kilometers'});
+                return len < 0.0000000001;
               });
 
-              log('No further action will be taken on this feature.');
-              break;
+              if(!falsePositive) {
+                split.features.forEach((segment, index) => {
+                  const copy_properties = Object.assign({}, features[i].properties);
+                  const reconstructed = Object.assign(segment, {properties: copy_properties});
+                  last_id++;
+                  reconstructed.properties.__prId__ = last_id;
+                  features.push(reconstructed);
+                  log(`Adding segment ${index} back to the loop as #${last_id}`);
+                });
+
+                log('No further action will be taken on this feature.');
+                break;
+              }
 
             } else {
               log(` - it could not be split: ${features[i].properties.__prId__}`);
