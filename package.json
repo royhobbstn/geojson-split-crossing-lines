@@ -1,0 +1,26 @@
+{
+  "name": "geojson-split-crossing-lines",
+  "version": "1.0.2",
+  "description": "split collection of crossing lines",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/royhobbstn/geojson-split-crossing-lines.git"
+  },
+  "author": "Daniel Trone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/royhobbstn/geojson-split-crossing-lines/issues"
+  },
+  "homepage": "https://github.com/royhobbstn/geojson-split-crossing-lines#readme",
+  "dependencies": {
+    "@turf/bbox": "6.0.1",
+    "@turf/boolean-equal": "6.0.1",
+    "@turf/length": "^6.0.2",
+    "@turf/line-split": "5.1.5",
+    "geojson-rbush": "3.1.1"
+  }
+}
