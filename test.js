@@ -1,9 +1,15 @@
 
 
 const splitLines = require('./index');
-const geo = require('./geo.json');
-const fs = require('fs');
+const fs = require('fs').promises;
 
-const split = splitLines(geo, true);
+main();
 
-fs.writeFileSync('./full_network.geojson', JSON.stringify(split), 'utf8');
+async function main() {
+    const geo_raw = await fs.readFile('./whole.geojson', 'utf8');
+    const geo = JSON.parse(geo_raw);
+
+    const split = splitLines(geo);
+
+    await fs.writeFile('./split.geojson', JSON.stringify(split), 'utf8');
+}
